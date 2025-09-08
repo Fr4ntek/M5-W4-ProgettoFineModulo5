@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -28,24 +27,32 @@ public class EnemyBrain : MonoBehaviour
 
     [Header("Common Settings")]
     [SerializeField] private Transform _head;
-    [SerializeField] private Transform _target;
     [SerializeField] private float _viewAngle = 45f;
     [SerializeField] private float _sightDistance = 15f;
     [SerializeField] private LayerMask _whatIsObstacle;
-    [SerializeField] private LineRenderer _lineRenderer;
     [SerializeField] private int _subdivisions = 12;
-    [SerializeField] private NavMeshAgent _agent;
+    [SerializeField] private GameManager _gameManager;
+    private Transform _target;
+    private NavMeshAgent _agent;
+    private LineRenderer _lineRenderer;
 
 
     void Start()
     {
         _startPosition = transform.position;
+
         if (_target == null)
         {
             _target = GameObject.FindGameObjectWithTag("Player").transform;
         }
+
         _agent = GetComponent<NavMeshAgent>();
         _lineRenderer = GetComponentInChildren<LineRenderer>();
+        if (_lineRenderer != null )
+        {
+            _lineRenderer.startColor = Color.white;
+            _lineRenderer.endColor = Color.white;
+        }
 
         EvaluateConeOfView(_subdivisions);
         ChangeState(AIState.Idle);
@@ -138,7 +145,7 @@ public class EnemyBrain : MonoBehaviour
     }
 
     // BEHAVIOUR
-
+    // EnemyPatrol
     private void PerformPatrol()
     {
         if (_waypoints.Length == 0) return;
@@ -150,10 +157,7 @@ public class EnemyBrain : MonoBehaviour
         }
     }
 
-    //private void PerformRotation()
-    //{
-    //    StartCoroutine(RotateEveryFewSeconds());
-    //}
+    // EnemyRotate
     private IEnumerator RotateEveryFewSeconds()
     {
         while (true)
@@ -212,5 +216,13 @@ public class EnemyBrain : MonoBehaviour
         arcPoints[subdivisions] = Vector3.zero;
 
         _lineRenderer.SetPositions(arcPoints);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            _gameManager.EndGame(); 
+        }
     }
 }
