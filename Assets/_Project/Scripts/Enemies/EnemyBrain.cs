@@ -145,7 +145,7 @@ public class EnemyBrain : MonoBehaviour
     }
 
     // BEHAVIOUR
-    // EnemyPatrol
+        // EnemyPatrol
     private void PerformPatrol()
     {
         if (_waypoints.Length == 0) return;
@@ -157,7 +157,7 @@ public class EnemyBrain : MonoBehaviour
         }
     }
 
-    // EnemyRotate
+        // EnemyRotate
     private IEnumerator RotateEveryFewSeconds()
     {
         while (true)
@@ -218,6 +218,7 @@ public class EnemyBrain : MonoBehaviour
         _lineRenderer.SetPositions(arcPoints);
     }
 
+    // Interaction with the Player
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
